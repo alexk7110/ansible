@@ -1,0 +1,61 @@
+---
+- name: Ubuntu 20.04 focal docker installation from .deb
+  hosts: ubuntu
+  # --ask-become-pass at runtime
+
+  vars:
+    - server_user: user
+    - focal_url: https://docker.com/
+    - debfiles:
+        - docker_cli.deb
+        - containerd.deb
+        - docker_ce.deb
+        - docker-compose.deb
+
+  tasks:
+    - name: Uninstall docker snap
+      snap:
+        name: docker
+        state: absent
+      become: true
+
+    - name: Make docker_installation directory
+      ansible.builtin.file:
+        path: "/home/{{ server_user }}/docker_installation"
+        state: directory
+
+    - name: Download docker .deb files for Ubuntu 20.04 focal
+      ansible.buildin.get_url:
+        url: "{{ items }}"
+        dest: "/home/{{ server_user }}/docker_installation/"
+      loop:
+        - "https://{{ focal_url }}/{{ debfiles[0] }}"
+        - "https://{{ focal_url }}/{{ debfiles[1] }}"
+        - "https://{{ focal_url }}/{{ debfiles[2] }}"
+        - "https://{{ focal_url }}/{{ debfiles[3] }}"
+
+    - name: Install docker deb packages
+      ansible.builtin.apt:
+        deb: "/home/{{ server_user }}/docker_installation/{{ items }}"
+      loop:
+        - "{{ debfiles[0] }}"
+        - "{{ debfiles[1] }}"
+        - "{{ debfiles[2] }}"
+        - "{{ debfiles[3] }}"
+      become: true
+
+
+    - name: Add {{ server_user }} to docker group
+      ansible.builtin.user: 
+        name: "{{ server_user }}"
+        groups: docker
+        append: yes
+      become: true
+
+    - name: Add docker-compose path to .profile
+      ansible.builtin.lineinfile:
+        path: "/home/{{ server_user }}/.profile"
+        line: export PATH="/var/.....:$PATH"
+
+
+
