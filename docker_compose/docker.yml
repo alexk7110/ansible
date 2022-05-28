@@ -1,0 +1,24 @@
+---
+- name: Docker compose test
+  hosts: ubuntu
+  vars:
+    compose_dir: testing
+
+  tasks:
+
+    - name: Create docker file directories
+      ansible.builtin.file:
+        path: "/home/alexk7110/docker/{{ compose_dir }}"
+        state: directory
+
+    - name: copy docker-compose yml
+      ansible.builtin.copy:
+        src: docker-compose.yml
+        dest: "/home/alexk7110/docker/{{ compose_dir }}/"
+
+    - name: test docker_compose
+      community.docker.docker_compose:
+        project_src: "/home/alexk7110/docker/{{ compose_dir }}/"
+        state: present
+
+
