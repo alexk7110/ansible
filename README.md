@@ -13,6 +13,8 @@ This one installs:
 
 It also adds the user to the `docker` group and adds the docker-compose path to the `$PATH`
 
+Python3 pip is also installed along with docker and docker-compose python modules for control
+
 ---
 ### A docker-compose demo file along with info
 Just a proof of concept that actually worked on my test machines
