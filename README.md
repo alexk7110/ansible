@@ -1,6 +1,7 @@
 # ansible
 My Ansible playbooks
 
+---
 ### docker installation on ubuntu 20.04 focal from .deb files
 Having to uninstall docker snap from an Ubuntu image and install it from .deb files for stability and user requested updates made me create this playbook found in docker_on_ubuntu_server directory.
 
@@ -11,3 +12,9 @@ This one installs:
 - 2.3.3 docker-compose plugin ubuntu focal amd64 version
 
 It also adds the user to the `docker` group and adds the docker-compose path to the `$PATH`
+
+---
+### A docker-compose demo file along with info
+Just a proof of concept that actually worked on my test machines
+
+I had to test the dependencies just to be sure once this might come up.
