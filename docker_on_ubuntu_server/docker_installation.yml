@@ -5,16 +5,16 @@
 
   vars:
     - server_user: user
-    - focal_url: https://docker.com/
+    - focal_url: https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64
     - debfiles:
-        - docker_cli.deb
-        - containerd.deb
-        - docker_ce.deb
-        - docker-compose.deb
+        - docker-ce-cli_20.10.13~3-0~ubuntu-focal_amd64.deb
+        - containerd.io_1.4.13-1_amd64.deb
+        - docker-ce_20.10.13~3-0~ubuntu-focal_amd64.deb
+        - docker-compose-plugin_2.3.3~ubuntu-focal_amd64.deb
 
   tasks:
     - name: Uninstall docker snap
-      snap:
+      community.general.snap:
         name: docker
         state: absent
       become: true
@@ -29,10 +29,10 @@
         url: "{{ items }}"
         dest: "/home/{{ server_user }}/docker_installation/"
       loop:
-        - "https://{{ focal_url }}/{{ debfiles[0] }}"
-        - "https://{{ focal_url }}/{{ debfiles[1] }}"
-        - "https://{{ focal_url }}/{{ debfiles[2] }}"
-        - "https://{{ focal_url }}/{{ debfiles[3] }}"
+        - "{{ focal_url }}/{{ debfiles[0] }}"
+        - "{{ focal_url }}/{{ debfiles[1] }}"
+        - "{{ focal_url }}/{{ debfiles[2] }}"
+        - "{{ focal_url }}/{{ debfiles[3] }}"
 
     - name: Install docker deb packages
       ansible.builtin.apt:
@@ -44,9 +44,8 @@
         - "{{ debfiles[3] }}"
       become: true
 
-
     - name: Add {{ server_user }} to docker group
-      ansible.builtin.user: 
+      ansible.builtin.user:
         name: "{{ server_user }}"
         groups: docker
         append: yes
@@ -55,7 +54,14 @@
     - name: Add docker-compose path to .profile
       ansible.builtin.lineinfile:
         path: "/home/{{ server_user }}/.profile"
-        line: export PATH="/var/.....:$PATH"
+        line: export PATH="/usr/libexec/docker/cli-plugins:$PATH"
 
-
+    - name: Check if docker services are running
+      ansible.builtin.service:
+        name: "{{ items }}"
+        state: started
+        enabled: yes
+      loop:
+        - containerd
+        - docker
 
