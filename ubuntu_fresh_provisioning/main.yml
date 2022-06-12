@@ -47,3 +47,10 @@
         version: master
         clone: true
         update: true
+
+    - name: Install useful Python modules
+      ansible.builtin.pip:
+        name:
+          - pip
+          - wheel
+          - setuptools
