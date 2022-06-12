@@ -1,7 +1,7 @@
 ---
 
 - name: Initialise a fresh Ubuntu installation
-  hosts: localhost
+  hosts: xubuntu2204
 
   tasks:
 
@@ -53,6 +53,12 @@
         version: master
         clone: true
         update: true
+
+    - name: Copy over some useful dot files
+      ansible.builtin.copy:
+        src: ~/.tmux.conf
+        dest: ~/
+        mode: 0644
 
     - name: Install useful Python modules
       ansible.builtin.pip:
