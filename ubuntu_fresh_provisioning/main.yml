@@ -1,7 +1,7 @@
 ---
 
 - name: Initialise a fresh Ubuntu installation
-  hosts: xubuntu2204
+  hosts: localhost
 
   tasks:
 
@@ -59,6 +59,7 @@
         src: ~/.tmux.conf
         dest: ~/
         mode: 0644
+      when: "ansible_hostname is not zen"
 
     - name: Install useful Python modules
       ansible.builtin.pip:
