@@ -34,6 +34,12 @@
         state: present
       become: true
 
+    - name: Create bin directory on user home
+      ansible.builtin.file:
+        path: /home/alexk7110/bin
+        mode: 0744
+        state: directory
+
     - name: Create git directory on user home
       ansible.builtin.file:
         path: /home/alexk7110/git
