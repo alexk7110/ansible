@@ -1,7 +1,9 @@
 ---
 
 - name: Initialise a fresh Ubuntu installation
-  hosts: ubu2204
+  hosts: nextcloud
+  vars:
+    - lxc_user: ubuntu
 
   tasks:
 
@@ -36,22 +38,22 @@
 
     - name: Create bin directory on user home
       ansible.builtin.file:
-        path: /home/{{ ansible_user_id }}/bin
+        path: /home/{{ lxc_user }}/bin
         mode: 0744
         state: directory
-        owner: 1001
+        owner: 1000
 
     - name: Create git directory on user home
       ansible.builtin.file:
-        path: /home/{{ ansible_user_id }}/git
+        path: /home/{{ lxc_user }}/git
         mode: 0744
         state: directory
-        owner: 1001
+        owner: 1000
 
-    - name: Clone usefull git repos in ~/git
+    - name: Clone tmux-themepack git repo
       ansible.builtin.git:
         repo: 'https://github.com/jimeh/tmux-themepack.git'
-        dest: '/home/{{ ansible_user_id }}/git/tmux-themepack'
+        dest: '/home/{{ lxc_user }}/git/tmux-themepack'
         version: master
         clone: true
         update: true
@@ -61,7 +63,7 @@
         src: "{{ item }}"
         dest: ~/
         mode: 0644
-        owner: 1001
+        owner: 1000
       when: 'ansible_hostname not in "zen"'
       loop:
         - ./files/.tmux.conf
