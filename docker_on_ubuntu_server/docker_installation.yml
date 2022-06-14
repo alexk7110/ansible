@@ -4,13 +4,13 @@
   # --ask-become-pass at runtime
 
   vars:
-    - server_user: user
-    - focal_url: https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64
-    - debfiles:
-        - docker-ce-cli_20.10.13~3-0~ubuntu-focal_amd64.deb
-        - containerd.io_1.4.13-1_amd64.deb
-        - docker-ce_20.10.13~3-0~ubuntu-focal_amd64.deb
-        - docker-compose-plugin_2.3.3~ubuntu-focal_amd64.deb
+    server_user: "user"
+    focal_url: "https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64"
+    debfiles:
+      - "docker-ce-cli_20.10.13~3-0~ubuntu-focal_amd64.deb"
+      - "containerd.io_1.4.13-1_amd64.deb"
+      - "docker-ce_20.10.13~3-0~ubuntu-focal_amd64.deb"
+      - "docker-compose-plugin_2.3.3~ubuntu-focal_amd64.deb"
 
   tasks:
     - name: Uninstall docker snap
@@ -23,11 +23,13 @@
       ansible.builtin.file:
         path: "/home/{{ server_user }}/docker_installation"
         state: directory
+        mode: 0744
 
     - name: Download docker .deb files for Ubuntu 20.04 focal
-      ansible.buildin.get_url:
+      ansible.builtin.get_url:
         url: "{{ item }}"
         dest: "/home/{{ server_user }}/docker_installation/"
+        mode: 0644
       loop:
         - "{{ focal_url }}/{{ debfiles[0] }}"
         - "{{ focal_url }}/{{ debfiles[1] }}"
@@ -48,7 +50,7 @@
       ansible.builtin.user:
         name: "{{ server_user }}"
         groups: docker
-        append: yes
+        append: true
       become: true
 
     - name: Add docker-compose path to .profile
@@ -60,18 +62,18 @@
       ansible.builtin.service:
         name: "{{ item }}"
         state: started
-        enabled: yes
+        enabled: true
       loop:
         - containerd
         - docker
 
     - name: install python package manager
-      apt:
+      ansible.builtin.apt:
         name: python3-pip
 
     - name: install python sdk
       become_user: "{{ lookup('env','USER') }}"
-      pip:
+      ansible.builtin.pip:
         name:
           - docker
           - docker-compose
